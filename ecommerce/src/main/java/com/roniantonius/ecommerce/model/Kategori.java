@@ -33,4 +33,8 @@ public class Kategori {
 	
 	@OneToMany(mappedBy = "kategori")
 	private List<Produk> produks;
+
+	public Kategori(String nama) {
+		this.nama = nama;
+	}
 }

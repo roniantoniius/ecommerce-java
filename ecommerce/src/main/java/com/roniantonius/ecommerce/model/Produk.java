@@ -53,4 +53,14 @@ public class Produk {
 	
 	@OneToMany(mappedBy = "produk", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Gambar> gambars;
+
+	public Produk(String nama, String merek, BigDecimal harga, int inventory, String deskripsi,
+			Kategori kategori) {
+		this.nama = nama;
+		this.merek = merek;
+		this.harga = harga;
+		this.inventory = inventory;
+		this.deskripsi = deskripsi;
+		this.kategori = kategori;
+	}
 }

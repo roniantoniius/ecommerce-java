@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.UUID;
 
 import com.roniantonius.ecommerce.model.Produk;
+import com.roniantonius.ecommerce.request.AddProdukRequest;
+import com.roniantonius.ecommerce.request.ProdukUpdateRequest;
 
-public interface ProductService {
-	Produk addProduk(Produk produk);
+public interface ProdukService {
+	Produk addProduk(AddProdukRequest request);
 	Produk getProdukById(UUID id);
 	void deleteProdukById(UUID id);
-	void updateProdukById(Produk produk, UUID id);
+	Produk updateProdukById(ProdukUpdateRequest request, UUID id);
 	List<Produk> getAllProduks();
 	List<Produk> getProduksByKategori(String kategori);
 	List<Produk> getProduksByMerek(String merek);

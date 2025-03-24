@@ -1,19 +1,49 @@
 package com.roniantonius.ecommerce.service.produk;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.stereotype.Service;
+
 import com.roniantonius.ecommerce.exceptions.ProdukNotFoundException;
+import com.roniantonius.ecommerce.model.Kategori;
 import com.roniantonius.ecommerce.model.Produk;
+import com.roniantonius.ecommerce.repositories.KategoriRepository;
 import com.roniantonius.ecommerce.repositories.ProdukRepository;
+import com.roniantonius.ecommerce.request.AddProdukRequest;
+import com.roniantonius.ecommerce.request.ProdukUpdateRequest;
 
-public class ImplProductService implements ProductService {
+import lombok.RequiredArgsConstructor;
 
-	private ProdukRepository produkRepository;
+@Service
+@RequiredArgsConstructor
+public class ImplProdukService implements ProdukService {
+
+	private final ProdukRepository produkRepository;
+	private final KategoriRepository kategoriRepository;
+	
 	@Override
-	public Produk addProduk(Produk produk) {
+	public Produk addProduk(AddProdukRequest request) {
 		// TODO Auto-generated method stub
-		return null;
+		Kategori kategori = Optional.ofNullable(kategoriRepository.findByNama(request.getKategori().getNama()))
+				.orElseGet(() -> {
+					Kategori kategoriBaru = new Kategori(request.getKategori().getNama());
+					return kategoriRepository.save(kategoriBaru);
+				});
+		request.setKategori(kategori);
+		return produkRepository.save(createProduk(request, kategori));
+	}
+	
+	private Produk createProduk(AddProdukRequest request, Kategori kategori) {
+		return new Produk(
+				request.getNama(),
+				request.getMerek(),
+				request.getHarga(),
+				request.getInventory(),
+				request.getDeskripsi(),
+				kategori
+		);
 	}
 
 	@Override
@@ -31,9 +61,23 @@ public class ImplProductService implements ProductService {
 	}
 
 	@Override
-	public void updateProdukById(Produk produk, UUID id) {
+	public Produk updateProdukById(ProdukUpdateRequest request, UUID id) {
 		// TODO Auto-generated method stub
-		
+		return produkRepository.findById(id)
+				.map(updateProduk -> updateExistingProduk(updateProduk, request))
+				.map(produkRepository::save)
+				.orElseThrow(() -> new ProdukNotFoundException("Produk yang akan diperbarui tidak ditemukan!"));
+	}
+	
+	private Produk updateExistingProduk(Produk produk, ProdukUpdateRequest request) {
+		produk.setNama(request.getNama());
+		produk.setMerek(request.getMerek());
+		produk.setHarga(request.getHarga());
+		produk.setInventory(request.getInventory());
+		produk.setDeskripsi(request.getDeskripsi());
+		Kategori kategori = kategoriRepository.findByNama(request.getKategori().getNama());
+		produk.setKategori(kategori);
+		return produk;
 	}
 
 	@Override
