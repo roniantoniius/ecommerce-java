@@ -40,6 +40,7 @@ public class ImplGambarService implements GambarService{
 			});
 	}
 
+	// method untuk simpan beberapa gambar dalam satu produk
 	@Override
 	public List<GambarDto> saveGambars(List<MultipartFile> files, UUID produkId) {
 		// TODO Auto-generated method stub
