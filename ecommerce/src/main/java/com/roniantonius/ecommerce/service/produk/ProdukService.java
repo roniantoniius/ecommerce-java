@@ -3,6 +3,7 @@ package com.roniantonius.ecommerce.service.produk;
 import java.util.List;
 import java.util.UUID;
 
+import com.roniantonius.ecommerce.dto.ProdukDto;
 import com.roniantonius.ecommerce.model.Produk;
 import com.roniantonius.ecommerce.request.AddProdukRequest;
 import com.roniantonius.ecommerce.request.ProdukUpdateRequest;
@@ -19,4 +20,8 @@ public interface ProdukService {
 	List<Produk> getProduksByNama(String nama);
 	List<Produk> getProduksByMerekAndNama(String merek, String nama);
 	Long countProduksByMerekAndNama(String merek, String nama);
+	
+	List<ProdukDto> getConvertedProduks(List<Produk> produks);
+	
+	ProdukDto convertToDto(Produk produk);
 }

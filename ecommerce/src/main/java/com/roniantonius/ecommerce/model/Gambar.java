@@ -3,6 +3,8 @@ package com.roniantonius.ecommerce.model;
 import java.sql.Blob;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

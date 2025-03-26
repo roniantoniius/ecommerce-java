@@ -4,11 +4,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.roniantonius.ecommerce.dto.GambarDto;
+import com.roniantonius.ecommerce.dto.ProdukDto;
 import com.roniantonius.ecommerce.exceptions.ProdukNotFoundException;
+import com.roniantonius.ecommerce.model.Gambar;
 import com.roniantonius.ecommerce.model.Kategori;
 import com.roniantonius.ecommerce.model.Produk;
+import com.roniantonius.ecommerce.repositories.GambarRepository;
 import com.roniantonius.ecommerce.repositories.KategoriRepository;
 import com.roniantonius.ecommerce.repositories.ProdukRepository;
 import com.roniantonius.ecommerce.request.AddProdukRequest;
@@ -22,6 +27,8 @@ public class ImplProdukService implements ProdukService {
 
 	private final ProdukRepository produkRepository;
 	private final KategoriRepository kategoriRepository;
+	private final GambarRepository gambarRepository;
+	private final ModelMapper modelMapper;
 	
 	@Override
 	public Produk addProduk(AddProdukRequest request) {
@@ -120,6 +127,22 @@ public class ImplProdukService implements ProdukService {
 	public Long countProduksByMerekAndNama(String merek, String nama) {
 		// TODO Auto-generated method stub
 		return produkRepository.countByMerekAndNama(merek, nama);
+	}
+	
+	@Override
+	public List<ProdukDto> getConvertedProduks(List<Produk> produks){
+		return produks.stream().map(this::convertToDto).toList();
+	}
+	
+	@Override
+	public ProdukDto convertToDto(Produk produk) {
+		ProdukDto produkDto = modelMapper.map(produk, ProdukDto.class);
+		List<Gambar> daftarGambars = gambarRepository.findByProdukId(produk.getId());
+		List<GambarDto> daftarGambarDtos = daftarGambars.stream()
+				.map(gambar -> modelMapper.map(gambar, GambarDto.class))
+				.toList();
+		produkDto.setGambars(daftarGambarDtos);
+		return produkDto;
 	}
 
 }

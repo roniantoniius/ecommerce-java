@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "${api.prefix}/kategoris")
+@RequestMapping(path = "/api/v1/kategoris")
 public class KategoriController {
 	private final KategoriService kategoriService;
 	

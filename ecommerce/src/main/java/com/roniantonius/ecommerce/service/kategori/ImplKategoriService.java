@@ -58,6 +58,7 @@ public class ImplKategoriService implements KategoriService {
 	@Override
 	public void deleteKategoriById(UUID id) {
 		// TODO Auto-generated method stub
+		// tambahin logika supaya hanya bisa dihapus ketika jumlah Produk 0 pada kategori tersebut
 		kategoriRepository.findById(id).ifPresentOrElse(
 				kategoriRepository::delete,
 				() -> { throw new ResourceNotFoundException("Produk yang ingin dihapus tidak ditemukan");

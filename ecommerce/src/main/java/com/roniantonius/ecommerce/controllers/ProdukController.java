@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.roniantonius.ecommerce.dto.ProdukDto;
 import com.roniantonius.ecommerce.exceptions.ResourceNotFoundException;
 import com.roniantonius.ecommerce.model.Produk;
 import com.roniantonius.ecommerce.request.AddProdukRequest;
@@ -26,21 +27,23 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "${api.prefix}/produks")
+@RequestMapping(path = "/api/v1/produks")
 public class ProdukController {
 	private final ProdukService produkService;
 	
 	@GetMapping(path = "/daftar-produk")
 	public ResponseEntity<ApiResponse> getAllProduk(){
 		List<Produk> produks = produkService.getAllProduks();
-		return ResponseEntity.ok(new ApiResponse("Berhasil!", produks));
+		List<ProdukDto> daftarProdukDtos = produkService.getConvertedProduks(produks);
+		return ResponseEntity.ok(new ApiResponse("Berhasil!", daftarProdukDtos));
 	}
 	
 	@GetMapping(path = "/{id}/produk")
 	public ResponseEntity<ApiResponse> getProdukById(@PathVariable UUID id){
 		try {
 			Produk produk = produkService.getProdukById(id);
-			return ResponseEntity.ok(new ApiResponse("Berhasil mendapat produk id", produk));
+			ProdukDto produkDto = produkService.convertToDto(produk);
+			return ResponseEntity.ok(new ApiResponse("Berhasil mendapat produk id", produkDto));
 		} catch (ResourceNotFoundException e) {
 			// TODO: handle exception
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
@@ -51,7 +54,8 @@ public class ProdukController {
 	public ResponseEntity<ApiResponse> addProduk(@RequestBody AddProdukRequest addProdukRequest){
 		try {
 			Produk produk = produkService.addProduk(addProdukRequest);
-			return ResponseEntity.ok(new ApiResponse("Berhasil menambah produk", produk));
+			ProdukDto produkDto = produkService.convertToDto(produk);
+			return ResponseEntity.ok(new ApiResponse("Berhasil menambah produk", produkDto));
 		} catch (ResourceNotFoundException e) {
 			// TODO: handle exception
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
@@ -62,7 +66,8 @@ public class ProdukController {
 	public ResponseEntity<ApiResponse> updateProduk(@RequestBody ProdukUpdateRequest produkUpdateRequest, @PathVariable UUID id){
 		try {
 			Produk produk = produkService.updateProdukById(produkUpdateRequest, id);
-			return ResponseEntity.ok(new ApiResponse("Update produk berhasil!", produk));
+			ProdukDto produkDto = produkService.convertToDto(produk);
+			return ResponseEntity.ok(new ApiResponse("Update produk berhasil!", produkDto));
 		} catch (ResourceNotFoundException e) {
 			// TODO: handle exception
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
@@ -84,10 +89,12 @@ public class ProdukController {
 	public ResponseEntity<ApiResponse> getProdukByMerekDanNama(@RequestParam String merek, @RequestParam String nama){
 		try {
 			List<Produk> daftarProduks = produkService.getProduksByMerekAndNama(merek, nama);
+			
 			if (daftarProduks.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("Produk dengan Merek dan Nama tersebut tidak ditemukan", null));
 			}
-			return ResponseEntity.ok(new ApiResponse("berhasil", daftarProduks));
+			List<ProdukDto> daftarProdukDtos = produkService.getConvertedProduks(daftarProduks);
+			return ResponseEntity.ok(new ApiResponse("berhasil", daftarProdukDtos));
 		} catch (Exception e) {
 			// TODO: handle exception
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
@@ -101,7 +108,8 @@ public class ProdukController {
 			if (daftarProduks.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("Produk dengan Kategori atau Merek tersebut tidak ditemukan", null));
 			}
-			return ResponseEntity.ok(new ApiResponse("berhasil", daftarProduks));
+			List<ProdukDto> daftarProdukDtos = produkService.getConvertedProduks(daftarProduks);
+			return ResponseEntity.ok(new ApiResponse("berhasil", daftarProdukDtos));
 		} catch (Exception e) {
 			// TODO: handle exception
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
@@ -109,13 +117,14 @@ public class ProdukController {
 	}
 	
 	@GetMapping(path = "/filter-produk-nama/{nama}/semua")
-	public ResponseEntity<ApiResponse> getProdukByName(@PathVariable String nama){
+	public ResponseEntity<ApiResponse> getProdukByNama(@PathVariable String nama){
 		try {
 			List<Produk> daftarProduks = produkService.getProduksByNama(nama);
 			if (daftarProduks.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("Daftar Produk dengan nama tersebut tidak ditemukan", null));
 			}
-			return ResponseEntity.ok(new ApiResponse("berhasil", daftarProduks));
+			List<ProdukDto> daftarProdukDtos = produkService.getConvertedProduks(daftarProduks);
+			return ResponseEntity.ok(new ApiResponse("berhasil", daftarProdukDtos));
 		} catch (Exception e) {
 			// TODO: handle exception
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
@@ -129,7 +138,8 @@ public class ProdukController {
 			if (daftarProduks.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("Daftar Produk dengan merek tersebut tidak ditemukan", null));
 			}
-			return ResponseEntity.ok(new ApiResponse("berhasil", daftarProduks));
+			List<ProdukDto> daftarProdukDtos = produkService.getConvertedProduks(daftarProduks);
+			return ResponseEntity.ok(new ApiResponse("berhasil", daftarProdukDtos));
 		} catch (Exception e) {
 			// TODO: handle exception
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
@@ -143,7 +153,8 @@ public class ProdukController {
 			if (daftarProduks.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("Daftar Produk dengan kategori tersebut tidak ditemukan", null));
 			}
-			return ResponseEntity.ok(new ApiResponse("berhasil", daftarProduks));
+			List<ProdukDto> daftarProdukDtos = produkService.getConvertedProduks(daftarProduks);
+			return ResponseEntity.ok(new ApiResponse("berhasil", daftarProdukDtos));
 		} catch (Exception e) {
 			// TODO: handle exception
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
