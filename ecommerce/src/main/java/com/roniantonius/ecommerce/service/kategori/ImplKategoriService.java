@@ -10,6 +10,7 @@ import com.roniantonius.ecommerce.exceptions.ResourceNotFoundException;
 import com.roniantonius.ecommerce.model.Kategori;
 import com.roniantonius.ecommerce.repositories.KategoriRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -37,6 +38,7 @@ public class ImplKategoriService implements KategoriService {
 		return kategoriRepository.findAll();
 	}
 
+	@Transactional
 	@Override
 	public Kategori addKategori(Kategori kategori) {
 		// TODO Auto-generated method stub
@@ -55,6 +57,7 @@ public class ImplKategoriService implements KategoriService {
 		}).orElseThrow(() -> new ResourceNotFoundException("Kategori yang ingin diperbarui tidak ditemukan"));
 	}
 
+	@Transactional
 	@Override
 	public void deleteKategoriById(UUID id) {
 		// TODO Auto-generated method stub

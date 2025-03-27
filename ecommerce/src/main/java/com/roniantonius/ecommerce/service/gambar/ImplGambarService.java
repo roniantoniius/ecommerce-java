@@ -18,6 +18,7 @@ import com.roniantonius.ecommerce.model.Produk;
 import com.roniantonius.ecommerce.repositories.GambarRepository;
 import com.roniantonius.ecommerce.service.produk.ImplProdukService;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -31,6 +32,7 @@ public class ImplGambarService implements GambarService{
 		return gambarRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Gambar tidak ditemukan dengan id " + id));
 	}
 
+	@Transactional
 	@Override
 	public void deleteGambarById(UUID id) {
 		// TODO Auto-generated method stub
@@ -40,6 +42,7 @@ public class ImplGambarService implements GambarService{
 			});
 	}
 
+	@Transactional
 	// method untuk simpan beberapa gambar dalam satu produk
 	@Override
 	public List<GambarDto> saveGambars(List<MultipartFile> files, UUID produkId) {

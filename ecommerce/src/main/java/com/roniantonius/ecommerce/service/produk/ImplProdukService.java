@@ -19,6 +19,7 @@ import com.roniantonius.ecommerce.repositories.ProdukRepository;
 import com.roniantonius.ecommerce.request.AddProdukRequest;
 import com.roniantonius.ecommerce.request.ProdukUpdateRequest;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -59,6 +60,7 @@ public class ImplProdukService implements ProdukService {
 		return produkRepository.findById(id).orElseThrow(() -> new ProdukNotFoundException("Produk atau barang tidak ditemukan!"));
 	}
 
+	@Transactional
 	@Override
 	public void deleteProdukById(UUID id) {
 		// TODO Auto-generated method stub
@@ -67,6 +69,7 @@ public class ImplProdukService implements ProdukService {
 				() -> {throw new ProdukNotFoundException("Produk yang ingin dihapus tidak ditemukan");});
 	}
 
+	@Transactional
 	@Override
 	public Produk updateProdukById(ProdukUpdateRequest request, UUID id) {
 		// TODO Auto-generated method stub
