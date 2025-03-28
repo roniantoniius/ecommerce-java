@@ -26,7 +26,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "keranjang")
-@Builder
 public class Keranjang {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)

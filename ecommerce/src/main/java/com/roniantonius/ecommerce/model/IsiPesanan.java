@@ -1,11 +1,13 @@
 package com.roniantonius.ecommerce.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.roniantonius.ecommerce.enums.StatusPesanan;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,9 +27,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "isikeranjang")
+@Table(name = "isipesanan")
 @Builder
-public class IsiKeranjang {
+public class IsiPesanan {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
@@ -35,22 +37,25 @@ public class IsiKeranjang {
 	@Column(nullable = false)
 	private int kuantitas;
 	
-	@Column(nullable = false)
-	private BigDecimal hargaUnit;
-	
-	@Column(nullable = false)
-	private BigDecimal hargaTotal;
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "pesanan_id", nullable = false)
+	private Pesanan pesanan;
 	
 	@ManyToOne
 	@JoinColumn(name = "produk_id", nullable = false)
 	private Produk produk;
 	
-	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "keranjang_id", nullable = false)
-	private Keranjang keranjang;
 	
-	public void setHargaTotal() {
-		this.hargaTotal = this.hargaUnit.multiply(new BigDecimal(kuantitas));
-	};
+	@Column(nullable = false)
+	private BigDecimal harga;
+
+
+	public IsiPesanan(Pesanan pesanan, Produk produk, int kuantitas, BigDecimal harga) {
+		this.pesanan = pesanan;
+		this.produk = produk;
+		this.kuantitas = kuantitas;
+		this.harga = harga;
+	}
+	
 }
