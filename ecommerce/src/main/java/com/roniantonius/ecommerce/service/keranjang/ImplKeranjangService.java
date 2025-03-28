@@ -2,6 +2,7 @@ package com.roniantonius.ecommerce.service.keranjang;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import com.roniantonius.ecommerce.model.Keranjang;
 import com.roniantonius.ecommerce.repositories.IsiKeranjangRepository;
 import com.roniantonius.ecommerce.repositories.KeranjangRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -30,6 +32,7 @@ public class ImplKeranjangService implements KeranjangService {
 		return keranjangRepository.save(keranjang);
 	}
 
+	@Transactional
 	@Override
 	public void clearKeranjang(UUID id) {
 		// TODO Auto-generated method stub
@@ -44,6 +47,14 @@ public class ImplKeranjangService implements KeranjangService {
 		// TODO Auto-generated method stub
 		Keranjang keranjang = getKeranjang(id);
 		return keranjang.getJumlahTotal();
+	}
+	
+	@Override
+	public UUID initializeNewKeranjang() {
+		Keranjang keranjang = new Keranjang();
+		UUID newKeranjangId = UUID.randomUUID();
+		keranjang.setId(newKeranjangId);
+		return keranjangRepository.save(keranjang).getId();
 	}
 
 }

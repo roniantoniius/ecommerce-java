@@ -9,4 +9,5 @@ public interface KeranjangService {
 	Keranjang getKeranjang(UUID id);
 	void clearKeranjang(UUID id);
 	BigDecimal getHargaTotal(UUID id);
+	UUID initializeNewKeranjang();
 }
